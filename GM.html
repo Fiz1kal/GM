@@ -62,13 +62,10 @@
 
   /* Cards */
   .card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); margin-bottom: 10px; overflow: hidden; background: var(--color-background-primary); }
-  .card-head { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: var(--color-background-secondary); cursor: pointer; user-select: none; gap: 10px; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: var(--color-background-secondary); gap: 10px; }
   .card-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
   .card-meta { font-size: 11px; color: var(--color-text-secondary); white-space: nowrap; }
-  .card-body { display: none; padding: 13px 14px; border-top: 0.5px solid var(--color-border-tertiary); }
-  .card-body.open { display: block; }
-  .chev { font-size: 11px; color: var(--color-text-secondary); transition: transform .2s; flex-shrink: 0; }
-  .chev.open { transform: rotate(90deg); }
+  .card-body { display: block; padding: 13px 14px; border-top: 0.5px solid var(--color-border-tertiary); }
   .row { display: grid; grid-template-columns: 110px 1fr; gap: 3px 10px; font-size: 12px; margin-bottom: 6px; line-height: 1.55; }
   .lbl { color: var(--color-text-secondary); padding-top: 1px; }
   .val { color: var(--color-text-primary); }
@@ -124,7 +121,6 @@
   @media print {
     .tabs, .print-btn { display: none; }
     .panel { display: block !important; }
-    .card-body { display: block !important; }
     body { background: white; }
   }
 </style>
@@ -167,10 +163,9 @@
     <div class="section-head">Hogyan kerülhet glutén az ételbe</div>
 
     <div class="card">
-      <div class="card-head" onclick="tog(this)">
+      <div class="card-head">
         <div class="card-title">Összetevőként — bármilyen formában</div>
-        <div class="card-meta">Közvetlen forrás</div><div class="chev">▶</div>
-      </div>
+        <div class="card-meta">Közvetlen forrás</div></div>
       <div class="card-body">
         <div class="row"><div class="lbl">Formák</div><div class="val">Glutént tartalmaz minden, amiben a fenti gabonák bármilyen formában szerepelnek — egészben, őrölve, pelyhesítve, csíraként vagy olajként.</div></div>
         <div class="row"><div class="lbl">Következmény</div><div class="val">Az összetevőlistát mindig végig kell olvasni, nem elég a termék nevére hagyatkozni.</div></div>
@@ -178,10 +173,9 @@
     </div>
 
     <div class="card">
-      <div class="card-head" onclick="tog(this)">
+      <div class="card-head">
         <div class="card-title">Szennyeződésként — az eredetileg gluténmentes ételben is</div>
-        <div class="card-meta">Kereszt­szennyeződés</div><div class="chev">▶</div>
-      </div>
+        <div class="card-meta">Kereszt­szennyeződés</div></div>
       <div class="card-body">
         <div class="row"><div class="lbl">Mikor</div><div class="val">Betakarítás, szállítás, csomagolás, tálalás vagy felhasználás során.</div></div>
         <div class="row"><div class="lbl">Miért</div><div class="val">Szinte bármely élelmiszer érintkezhet és szennyeződhet glutént tartalmazó anyaggal, még ha eredetileg nem is tartalmazta.</div></div>
@@ -252,10 +246,9 @@
     <div class="alert alert-danger">A glutén ragacsos, a konyhai eszközökön szabad szemmel nem látható, vékony réteget képező anyag. Az elkülönítés ezért nem opcionális.</div>
 
     <div class="card">
-      <div class="card-head" onclick="tog(this)">
+      <div class="card-head">
         <div class="card-title">Tárolás — elkülönítés</div>
-        <div class="card-meta">Alapszabály</div><div class="chev">▶</div>
-      </div>
+        <div class="card-meta">Alapszabály</div></div>
       <div class="card-body">
         <div class="row"><div class="lbl">Szabály</div><div class="val">A gluténmentes élelmiszert a gluténtartalmúaktól biztonságosan elkülönítve kell tárolni.</div></div>
         <div class="row"><div class="lbl">Miért</div><div class="val">A morzsa és a láthatatlan gluténréteg átkerülhet a szomszédos ételre.</div></div>
@@ -263,10 +256,9 @@
     </div>
 
     <div class="card">
-      <div class="card-head" onclick="tog(this)">
+      <div class="card-head">
         <div class="card-title">Edények és tálalás</div>
-        <div class="card-meta">Tányér · tál · pohár · tálca</div><div class="chev">▶</div>
-      </div>
+        <div class="card-meta">Tányér · tál · pohár · tálca</div></div>
       <div class="card-body">
         <div class="row"><div class="lbl">Külön edény</div><div class="val">Külön tányérra, tálba, pohárba, tálcára kell helyezni — semmiképp sem olyanra, amiben már van vagy korábban volt gluténtartalmú étel és nem lett gondosan elmosva.</div></div>
         <div class="row"><div class="lbl">Tányéron</div><div class="val">A tányérra szedett ételt elkülönítve kell tenni, hogy ne potyoghasson bele a gluténes morzsa.</div></div>
@@ -274,10 +266,9 @@
     </div>
 
     <div class="card">
-      <div class="card-head" onclick="tog(this)">
+      <div class="card-head">
         <div class="card-title">Érintés — kéz, evőeszköz, száj</div>
-        <div class="card-meta">Közvetlen szennyeződés</div><div class="chev">▶</div>
-      </div>
+        <div class="card-meta">Közvetlen szennyeződés</div></div>
       <div class="card-body">
         <div class="row"><div class="lbl">Kéz / eszköz</div><div class="val">Az ennivalóhoz nem szabad hozzányúlni gluténes kézzel vagy evőeszközzel.</div></div>
         <div class="row"><div class="lbl">Száj</div><div class="val">Nem szabad bele enni, inni — pohárba sem — gluténes szájjal.</div></div>
@@ -286,10 +277,9 @@
     </div>
 
     <div class="card">
-      <div class="card-head" onclick="tog(this)">
+      <div class="card-head">
         <div class="card-title">Kenhető termékek</div>
-        <div class="card-meta">Vaj · lekvár · krémek</div><div class="chev">▶</div>
-      </div>
+        <div class="card-meta">Vaj · lekvár · krémek</div></div>
       <div class="card-body">
         <div class="row"><div class="lbl">Tilos</div><div class="val">Nem használható az a vajféleség, szendvicskrém, lekvár, mogyorókrém, amivel korábban gluténes kenyeret is kentek.</div></div>
         <div class="row"><div class="lbl">Miért</div><div class="val">A késről a glutén visszakerül a tégelybe és az egész terméket szennyezi.</div></div>
@@ -297,10 +287,9 @@
     </div>
 
     <div class="card">
-      <div class="card-head" onclick="tog(this)">
+      <div class="card-head">
         <div class="card-title">Vágódeszka és eszközök</div>
-        <div class="card-meta">A fa a legkockázatosabb</div><div class="chev">▶</div>
-      </div>
+        <div class="card-meta">A fa a legkockázatosabb</div></div>
       <div class="card-body">
         <div class="row"><div class="lbl">Szeletelés</div><div class="val">Nem szabad olyan deszkán vagy tányéron szeletelni, amin előtte gluténes ennivaló volt és nem lett alaposan elmosogatva.</div></div>
         <div class="row"><div class="lbl">Fa eszközök</div><div class="val">A fából készült deszka és keverőkanál nehezebben tisztítható — javasolt, hogy elmosás után se használják egyaránt gluténes és gluténmentes ételekhez.</div></div>
@@ -347,10 +336,9 @@
     <div class="alert alert-warn">Étkezésen kívüli veszélyforrások — a napközis és óvodai környezet jellegzetes kockázatai.</div>
 
     <div class="card">
-      <div class="card-head" onclick="tog(this)">
+      <div class="card-head">
         <div class="card-title">Gyerekek egymást kínálják</div>
-        <div class="card-meta">Folyamatos figyelem</div><div class="chev">▶</div>
-      </div>
+        <div class="card-meta">Folyamatos figyelem</div></div>
       <div class="card-body">
         <div class="row"><div class="lbl">Kockázat</div><div class="val">A napközben lévő gyermekek önmaguktól megkínálhatják édességgel vagy más étellel a lisztérzékeny gyermeket.</div></div>
         <div class="row"><div class="lbl">Teendő</div><div class="val">Fokozottan ügyelni kell erre — a csoport egészének tudnia kell, hogy ez nem megengedett.</div></div>
@@ -358,10 +346,9 @@
     </div>
 
     <div class="card">
-      <div class="card-head" onclick="tog(this)">
+      <div class="card-head">
         <div class="card-title">Gyurma — só-liszt és bolti egyaránt</div>
-        <div class="card-meta">Kisebb gyermekeknél</div><div class="chev">▶</div>
-      </div>
+        <div class="card-meta">Kisebb gyermekeknél</div></div>
       <div class="card-body">
         <div class="row"><div class="lbl">Só-liszt gyurma</div><div class="val">Veszélyt jelenthet — jobb, ha nem is használjuk.</div></div>
         <div class="row"><div class="lbl">Bolti gyurma</div><div class="val">A sima, boltban kapható gyurma is gyakran tartalmaz glutént.</div></div>
@@ -371,10 +358,9 @@
     </div>
 
     <div class="card">
-      <div class="card-head" onclick="tog(this)">
+      <div class="card-head">
         <div class="card-title">Gluténes étellel való érintkezés feladat közben</div>
-        <div class="card-meta">Pl. naposi feladat</div><div class="chev">▶</div>
-      </div>
+        <div class="card-meta">Pl. naposi feladat</div></div>
       <div class="card-body">
         <div class="row"><div class="lbl">Helyzet</div><div class="val">Ha egy lisztérzékeny gyermek valamiért — például napos vagy más feladat kapcsán — hozzáér gluténtartalmú ételekhez.</div></div>
         <div class="row"><div class="lbl">Teendő</div><div class="val">Figyelni kell rá, hogy ne nyúljon a szájához vagy a szájába, amíg nagyon alaposan nem mos kezet.</div></div>
@@ -419,12 +405,6 @@ function show(id, el) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   document.getElementById(id).classList.add('active');
-}
-function tog(header) {
-  const body = header.nextElementSibling;
-  const chev = header.querySelector('.chev');
-  body.classList.toggle('open');
-  if (chev) chev.classList.toggle('open');
 }
 </script>
 </body>
