@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gyakorlati útmutató a gluténmentes ellátáshoz</title>
+<style>
+  :root {
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f4f0;
+    --color-background-tertiary: #eeede8;
+    --color-background-info: #e6f1fb;
+    --color-background-success: #eaf3de;
+    --color-background-warning: #faeeda;
+    --color-background-danger: #fcebeb;
+    --color-text-primary: #1a1a18;
+    --color-text-secondary: #5f5e5a;
+    --color-text-info: #185fa5;
+    --color-text-success: #3b6d11;
+    --color-text-warning: #854f0b;
+    --color-text-danger: #a32d2d;
+    --color-border-tertiary: rgba(0,0,0,0.12);
+    --color-border-secondary: rgba(0,0,0,0.22);
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-background-primary: #1c1c1a;
+      --color-background-secondary: #252523;
+      --color-background-tertiary: #2e2e2b;
+      --color-background-info: #0c3358;
+      --color-background-success: #1a3308;
+      --color-background-warning: #3d2405;
+      --color-background-danger: #3d1010;
+      --color-text-primary: #e8e6df;
+      --color-text-secondary: #9c9a92;
+      --color-text-info: #85b7eb;
+      --color-text-success: #97c459;
+      --color-text-warning: #ef9f27;
+      --color-text-danger: #f09595;
+      --color-border-tertiary: rgba(255,255,255,0.1);
+      --color-border-secondary: rgba(255,255,255,0.2);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); background: var(--color-background-tertiary); color: var(--color-text-primary); min-height: 100vh; }
+  .app { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+  /* Hero */
+  .hero { background: var(--color-background-primary); border-radius: var(--border-radius-lg); padding: 1.5rem; margin-bottom: 1.25rem; border: 0.5px solid var(--color-border-tertiary); }
+  .hero-title { font-size: 20px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+  .hero-sub { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; margin: 14px 0 12px; flex-wrap: wrap; }
+  .tab { font-size: 12px; padding: 6px 12px; border-radius: 20px; cursor: pointer; color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); transition: all .15s; font-family: var(--font-sans); white-space: nowrap; }
+  .tab.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: var(--color-text-primary); font-weight: 500; }
+  .tab:hover:not(.active) { background: var(--color-background-secondary); }
+  .panel { display: none; } .panel.active { display: block; }
+
+  /* Cards */
+  .card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); margin-bottom: 10px; overflow: hidden; background: var(--color-background-primary); }
+  .card-head { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: var(--color-background-secondary); cursor: pointer; user-select: none; gap: 10px; }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+  .card-meta { font-size: 11px; color: var(--color-text-secondary); white-space: nowrap; }
+  .card-body { display: none; padding: 13px 14px; border-top: 0.5px solid var(--color-border-tertiary); }
+  .card-body.open { display: block; }
+  .chev { font-size: 11px; color: var(--color-text-secondary); transition: transform .2s; flex-shrink: 0; }
+  .chev.open { transform: rotate(90deg); }
+  .row { display: grid; grid-template-columns: 110px 1fr; gap: 3px 10px; font-size: 12px; margin-bottom: 6px; line-height: 1.55; }
+  .lbl { color: var(--color-text-secondary); padding-top: 1px; }
+  .val { color: var(--color-text-primary); }
+
+  /* Tags */
+  .tag { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 8px; margin: 2px 2px 0 0; }
+  .tw  { background: var(--color-background-info);    color: var(--color-text-info); }
+  .ts  { background: var(--color-background-success); color: var(--color-text-success); }
+  .tw2 { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .td  { background: var(--color-background-danger);  color: var(--color-text-danger); }
+  .tn  { background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+
+  /* Alerts */
+  .alert { border-radius: var(--border-radius-md); padding: 9px 13px; margin-bottom: 12px; font-size: 12px; line-height: 1.55; }
+  .alert-warn    { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .alert-info    { background: var(--color-background-info);    color: var(--color-text-info); }
+  .alert-success { background: var(--color-background-success); color: var(--color-text-success); }
+  .alert-danger  { background: var(--color-background-danger);  color: var(--color-text-danger); }
+
+  /* Rule rows (day-row pattern) */
+  .day-row { display: flex; gap: 0; margin-bottom: 6px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden; background: var(--color-background-primary); }
+  .day-num { min-width: 46px; background: var(--color-background-secondary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); padding: 8px 4px; flex-shrink: 0; border-right: 0.5px solid var(--color-border-tertiary); }
+  .day-content { padding: 8px 12px; flex: 1; }
+  .day-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+  .day-sub { color: var(--color-text-secondary); font-size: 11px; line-height: 1.5; }
+  .day-badges { margin-top: 4px; }
+
+  /* Section heads */
+  .section-head { font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin: 14px 0 7px; }
+  .sep { margin: 14px 0 9px; font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .06em; display: flex; align-items: center; gap: 8px; }
+  .sep::after { content: ''; flex: 1; height: 0.5px; background: var(--color-border-secondary); }
+
+  /* List rows (water-row pattern) */
+  .wrow { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 12px; }
+  .wrow:last-child { border-bottom: none; }
+  .wmile { min-width: 118px; color: var(--color-text-secondary); font-size: 11px; flex-shrink: 0; }
+  .wname { flex: 1; color: var(--color-text-primary); line-height: 1.5; }
+
+  /* Info cards (perm-card pattern) */
+  .perm-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 11px 14px; margin-bottom: 9px; border: 0.5px solid var(--color-border-tertiary); }
+  .perm-title { font-size: 12px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+  .perm-desc { font-size: 11px; color: var(--color-text-secondary); line-height: 1.6; }
+
+  /* Print */
+  .print-btn { display: block; margin: 24px auto 0; padding: 10px 28px; font-size: 13px; font-family: var(--font-sans); cursor: pointer; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); }
+  .print-btn:hover { background: var(--color-background-tertiary); }
+
+  @media (max-width: 520px) {
+    .tab { font-size: 11px; padding: 5px 9px; }
+    .row { grid-template-columns: 1fr; }
+    .wmile { min-width: 100px; }
+  }
+  @media print {
+    .tabs, .print-btn { display: none; }
+    .panel { display: block !important; }
+    .card-body { display: block !important; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-title">Gyakorlati útmutató a gluténmentes ellátáshoz</div>
+    <div class="hero-sub">Rövid segédlet lisztérzékeny gyermekek biztonságos étkeztetéséhez.</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="show('tartalom',this)">Gluténos gabonák</div>
+    <div class="tab" onclick="show('mentes',this)">Gluténmentes élelmiszerek</div>
+    <div class="tab" onclick="show('rejtett',this)">A rejtett glutén</div>
+    <div class="tab" onclick="show('tarolas',this)">Tárolás</div>
+    <div class="tab" onclick="show('ellenorzes',this)">Ellenőrzés</div>
+    <div class="tab" onclick="show('egyeb',this)">Egyéb veszélyek</div>
+    <div class="tab" onclick="show('tevedesek',this)">Tévhitek</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       GLUTÉNTARTALOM
+  ═══════════════════════════════════════════ -->
+  <div class="panel active" id="tartalom">
+    <div class="alert alert-danger">A gluténmentesség nem fokozat kérdése. Már nyomnyi mennyiség is reakciót válthat ki — a szennyeződés szabad szemmel nem látható.</div>
+
+    <div class="sep">Gluténtartalmú gabonák</div>
+
+    <div class="wrow"><div class="wmile">Búza</div><div class="wname">Alapvető gluténforrás — minden formájában kerülendő</div><span class="tag td">Tilos</span></div>
+    <div class="wrow"><div class="wmile">Rozs</div><div class="wname">Gluténtartalmú gabona</div><span class="tag td">Tilos</span></div>
+    <div class="wrow"><div class="wmile">Árpa</div><div class="wname">Gluténtartalmú gabona — az árpamaláta is ide tartozik</div><span class="tag td">Tilos</span></div>
+    <div class="wrow"><div class="wmile">Tönköly</div><div class="wname">Gyakori tévhit, hogy gluténmentes — <strong>nem az</strong></div><span class="tag td">Tilos</span></div>
+    <div class="wrow"><div class="wmile">Durum</div><div class="wname">Durum termékek szintén nem gluténmentesek</div><span class="tag td">Tilos</span></div>
+    <div class="wrow"><div class="wmile">Zab</div><div class="wname">Csak külön gluténmentes megjelölés esetén tekinthető annak</div><span class="tag tw2">Csak jelöléssel</span></div>
+
+    <div class="section-head">Hogyan kerülhet glutén az ételbe</div>
+
+    <div class="card">
+      <div class="card-head" onclick="tog(this)">
+        <div class="card-title">Összetevőként — bármilyen formában</div>
+        <div class="card-meta">Közvetlen forrás</div><div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="row"><div class="lbl">Formák</div><div class="val">Glutént tartalmaz minden, amiben a fenti gabonák bármilyen formában szerepelnek — egészben, őrölve, pelyhesítve, csíraként vagy olajként.</div></div>
+        <div class="row"><div class="lbl">Következmény</div><div class="val">Az összetevőlistát mindig végig kell olvasni, nem elég a termék nevére hagyatkozni.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head" onclick="tog(this)">
+        <div class="card-title">Szennyeződésként — az eredetileg gluténmentes ételben is</div>
+        <div class="card-meta">Kereszt­szennyeződés</div><div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="row"><div class="lbl">Mikor</div><div class="val">Betakarítás, szállítás, csomagolás, tálalás vagy felhasználás során.</div></div>
+        <div class="row"><div class="lbl">Miért</div><div class="val">Szinte bármely élelmiszer érintkezhet és szennyeződhet glutént tartalmazó anyaggal, még ha eredetileg nem is tartalmazta.</div></div>
+        <div class="row"><div class="lbl">Jelölés</div><div class="val"><span class="tag td">Nem tekinthető gluténmentesnek</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       GLUTÉNMENTES
+  ═══════════════════════════════════════════ -->
+  <div class="panel" id="mentes">
+    <div class="alert alert-success">Ezek az élelmiszerek önmagukban, feldolgozatlan formában gluténmentesek. A biztonságuk azonban a tárolástól és tálalástól is függ — lásd a „Tárolás" fület.</div>
+
+    <div class="wrow"><div class="wmile">Zöldségek</div><div class="wname">Friss, feldolgozatlan formában</div><span class="tag ts">Biztonságos</span></div>
+    <div class="wrow"><div class="wmile">Gyümölcsök</div><div class="wname">Gyümölcsök és gyümölcslevek</div><span class="tag ts">Biztonságos</span></div>
+    <div class="wrow"><div class="wmile">Tejtermékek</div><div class="wname">Natúr, ízesítetlen: tej, tejföl, joghurt, kefir</div><span class="tag ts">Biztonságos</span></div>
+    <div class="wrow"><div class="wmile">Teák</div><div class="wname">Leveles vagy filteres formában — gyümölcs, gyógy, fekete, fehér, zöld</div><span class="tag tw2">Granulátum kivétel!</span></div>
+    <div class="wrow"><div class="wmile">GM termékek</div><div class="wname">Speciálisan lisztérzékenyek számára készült gluténmentes élelmiszerek</div><span class="tag ts">Biztonságos</span></div>
+    <div class="wrow"><div class="wmile">Kristálycukor</div><div class="wname">Természetesen gluténmentes</div><span class="tag ts">Biztonságos</span></div>
+    <div class="wrow"><div class="wmile">Italok</div><div class="wname">Szénsavas üdítők, ásványvizek</div><span class="tag ts">Biztonságos</span></div>
+    <div class="wrow"><div class="wmile">Alapanyagok</div><div class="wname">Tojás, rizs, méz</div><span class="tag ts">Biztonságos</span></div>
+
+    <div class="alert alert-warn" style="margin-top:14px">A <strong>granulátum formájában árult teákra</strong> a fenti biztonság nem vonatkozik — ezeket külön ellenőrizni kell.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       REJTETT GLUTÉN
+  ═══════════════════════════════════════════ -->
+  <div class="panel" id="rejtett">
+    <div class="alert alert-warn">Az alábbiak fő receptúrájukban gluténmentesek lennének, mégis gyakran tartalmaznak glutént. Ezeknél soha ne feltételezzük a biztonságot — mindig ellenőrizzük.</div>
+
+    <div class="day-row"><div class="day-num">01</div><div class="day-content">
+      <div class="day-title">Édességek</div>
+      <div class="day-sub">Cukorka, csokoládé, nyalóka, rágógumi, fagylalt. A napközis környezetben ezek a leggyakoribb kockázati pontok, mert gyakran kerülnek kézről kézre.</div>
+      <div class="day-badges"><span class="tag tw2">Ellenőrzés szükséges</span></div>
+    </div></div>
+
+    <div class="day-row"><div class="day-num">02</div><div class="day-content">
+      <div class="day-title">Pattogatott kukorica</div>
+      <div class="day-sub">A tapadásmentesítés miatt liszttel kezelhetik. Ez a csomagoláson nem mindig látszik, és az alapanyagból nem következtethető ki.</div>
+      <div class="day-badges"><span class="tag td">Gyakori rejtett forrás</span></div>
+    </div></div>
+
+    <div class="day-row"><div class="day-num">03</div><div class="day-content">
+      <div class="day-title">Melegitalok, ízesített tej</div>
+      <div class="day-sub">Kakaó, kávé, karamellás tej. Az ízesítő- és sűrítőanyagok tartalmazhatnak glutént.</div>
+      <div class="day-badges"><span class="tag tw2">Ellenőrzés szükséges</span></div>
+    </div></div>
+
+    <div class="day-row"><div class="day-num">04</div><div class="day-content">
+      <div class="day-title">Desszertek, ízesített tejtermékek</div>
+      <div class="day-sub">Puding, tejszínhab, gyümölcsjoghurt. A natúr tejtermék biztonságos — az ízesített változat nem feltétlenül.</div>
+      <div class="day-badges"><span class="tag tw2">Ellenőrzés szükséges</span></div>
+    </div></div>
+
+    <div class="day-row"><div class="day-num">05</div><div class="day-content">
+      <div class="day-title">Magvak, aszalt és kandírozott gyümölcsök</div>
+      <div class="day-sub">Mogyoró, mandula, napraforgó, tökmag, diákcsemege, datolya. A feldolgozás és csomagolás során szennyeződhetnek.</div>
+      <div class="day-badges"><span class="tag tw2">Ellenőrzés szükséges</span></div>
+    </div></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TÁROLÁS
+  ═══════════════════════════════════════════ -->
+  <div class="panel" id="tarolas">
+    <div class="alert alert-danger">A glutén ragacsos, a konyhai eszközökön szabad szemmel nem látható, vékony réteget képező anyag. Az elkülönítés ezért nem opcionális.</div>
+
+    <div class="card">
+      <div class="card-head" onclick="tog(this)">
+        <div class="card-title">Tárolás — elkülönítés</div>
+        <div class="card-meta">Alapszabály</div><div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="row"><div class="lbl">Szabály</div><div class="val">A gluténmentes élelmiszert a gluténtartalmúaktól biztonságosan elkülönítve kell tárolni.</div></div>
+        <div class="row"><div class="lbl">Miért</div><div class="val">A morzsa és a láthatatlan gluténréteg átkerülhet a szomszédos ételre.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head" onclick="tog(this)">
+        <div class="card-title">Edények és tálalás</div>
+        <div class="card-meta">Tányér · tál · pohár · tálca</div><div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="row"><div class="lbl">Külön edény</div><div class="val">Külön tányérra, tálba, pohárba, tálcára kell helyezni — semmiképp sem olyanra, amiben már van vagy korábban volt gluténtartalmú étel és nem lett gondosan elmosva.</div></div>
+        <div class="row"><div class="lbl">Tányéron</div><div class="val">A tányérra szedett ételt elkülönítve kell tenni, hogy ne potyoghasson bele a gluténes morzsa.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head" onclick="tog(this)">
+        <div class="card-title">Érintés — kéz, evőeszköz, száj</div>
+        <div class="card-meta">Közvetlen szennyeződés</div><div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="row"><div class="lbl">Kéz / eszköz</div><div class="val">Az ennivalóhoz nem szabad hozzányúlni gluténes kézzel vagy evőeszközzel.</div></div>
+        <div class="row"><div class="lbl">Száj</div><div class="val">Nem szabad bele enni, inni — pohárba sem — gluténes szájjal.</div></div>
+        <div class="row"><div class="lbl">Jelölés</div><div class="val"><span class="tag td">Azonnali szennyeződés</span></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head" onclick="tog(this)">
+        <div class="card-title">Kenhető termékek</div>
+        <div class="card-meta">Vaj · lekvár · krémek</div><div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="row"><div class="lbl">Tilos</div><div class="val">Nem használható az a vajféleség, szendvicskrém, lekvár, mogyorókrém, amivel korábban gluténes kenyeret is kentek.</div></div>
+        <div class="row"><div class="lbl">Miért</div><div class="val">A késről a glutén visszakerül a tégelybe és az egész terméket szennyezi.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head" onclick="tog(this)">
+        <div class="card-title">Vágódeszka és eszközök</div>
+        <div class="card-meta">A fa a legkockázatosabb</div><div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="row"><div class="lbl">Szeletelés</div><div class="val">Nem szabad olyan deszkán vagy tányéron szeletelni, amin előtte gluténes ennivaló volt és nem lett alaposan elmosogatva.</div></div>
+        <div class="row"><div class="lbl">Fa eszközök</div><div class="val">A fából készült deszka és keverőkanál nehezebben tisztítható — javasolt, hogy elmosás után se használják egyaránt gluténes és gluténmentes ételekhez.</div></div>
+        <div class="row"><div class="lbl">Megoldás</div><div class="val"><span class="tag ts">Gondosan tisztított fém vagy műanyag eszköz</span> <span class="tag ts">Vagy külön, csak gluténmentes készlet</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ELLENŐRZÉS
+  ═══════════════════════════════════════════ -->
+  <div class="panel" id="ellenorzes">
+    <div class="alert alert-info">Egy eredetileg nem gluténtartalmú élelmiszerről az alábbi sorrendben dönthető el, hogy biztonságos-e.</div>
+
+    <div class="day-row"><div class="day-num">01</div><div class="day-content">
+      <div class="day-title">Kérdezzük meg a szülőt</div>
+      <div class="day-sub">Mindig ez a legjobb megoldás. A szülő ismeri a gyermek pontos érzékenységét és a bevált termékeket.</div>
+      <div class="day-badges"><span class="tag ts">Elsődleges lépés</span></div>
+    </div></div>
+
+    <div class="day-row"><div class="day-num">02</div><div class="day-content">
+      <div class="day-title">A csomagolás önmagában nem elég</div>
+      <div class="day-sub">Sokszor nem lehet eldönteni belőle, mivel a „nyomokban tartalmazhat" információt nem kötelező feltüntetni a termékeken. A figyelmeztetés hiánya tehát nem bizonyítja a biztonságot.</div>
+      <div class="day-badges"><span class="tag tw2">A jelölés hiánya nem garancia</span></div>
+    </div></div>
+
+    <div class="day-row"><div class="day-num">03</div><div class="day-content">
+      <div class="day-title">Ha az összetevők fel vannak tüntetve</div>
+      <div class="day-sub">Gluténmentesnek tekinthető az az élelmiszer, amelynek sem az összetételében, sem a nyomokban és/vagy allergén információjában nem szerepelnek glutént tartalmazó gabonák, vagy maga a „glutén" szó.</div>
+      <div class="day-badges"><span class="tag ts">Gluténmentesnek tekinthető</span></div>
+    </div></div>
+
+    <div class="day-row"><div class="day-num">04</div><div class="day-content">
+      <div class="day-title">Ha szerepel „nyomokban tartalmazhat" figyelmeztetés</div>
+      <div class="day-sub">Ha a terméken szerepel, hogy nyomokban glutént — vagy búzát, árpát, rozst, tönkölyt, árpamalátát — tartalmazhat, illetve ezeket is feldolgozó és/vagy csomagoló üzemben készült, a termék nem tekinthető gluténmentesnek.</div>
+      <div class="day-badges"><span class="tag td">Nem adható</span></div>
+    </div></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       EGYÉB VESZÉLYEK
+  ═══════════════════════════════════════════ -->
+  <div class="panel" id="egyeb">
+    <div class="alert alert-warn">Étkezésen kívüli veszélyforrások — a napközis és óvodai környezet jellegzetes kockázatai.</div>
+
+    <div class="card">
+      <div class="card-head" onclick="tog(this)">
+        <div class="card-title">Gyerekek egymást kínálják</div>
+        <div class="card-meta">Folyamatos figyelem</div><div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="row"><div class="lbl">Kockázat</div><div class="val">A napközben lévő gyermekek önmaguktól megkínálhatják édességgel vagy más étellel a lisztérzékeny gyermeket.</div></div>
+        <div class="row"><div class="lbl">Teendő</div><div class="val">Fokozottan ügyelni kell erre — a csoport egészének tudnia kell, hogy ez nem megengedett.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head" onclick="tog(this)">
+        <div class="card-title">Gyurma — só-liszt és bolti egyaránt</div>
+        <div class="card-meta">Kisebb gyermekeknél</div><div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="row"><div class="lbl">Só-liszt gyurma</div><div class="val">Veszélyt jelenthet — jobb, ha nem is használjuk.</div></div>
+        <div class="row"><div class="lbl">Bolti gyurma</div><div class="val">A sima, boltban kapható gyurma is gyakran tartalmaz glutént.</div></div>
+        <div class="row"><div class="lbl">Teendő</div><div class="val">Figyelni kell, hogy a gyermek ne érintse a szájához, esetleges használat után pedig nagyon alaposan mosson kezet.</div></div>
+        <div class="row"><div class="lbl">Jelölés</div><div class="val"><span class="tag td">Lehetőleg kerülendő</span></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head" onclick="tog(this)">
+        <div class="card-title">Gluténes étellel való érintkezés feladat közben</div>
+        <div class="card-meta">Pl. naposi feladat</div><div class="chev">▶</div>
+      </div>
+      <div class="card-body">
+        <div class="row"><div class="lbl">Helyzet</div><div class="val">Ha egy lisztérzékeny gyermek valamiért — például napos vagy más feladat kapcsán — hozzáér gluténtartalmú ételekhez.</div></div>
+        <div class="row"><div class="lbl">Teendő</div><div class="val">Figyelni kell rá, hogy ne nyúljon a szájához vagy a szájába, amíg nagyon alaposan nem mos kezet.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TÉVEDÉSEK
+  ═══════════════════════════════════════════ -->
+  <div class="panel" id="tevedesek">
+    <div class="alert alert-danger">Ökölszabály: ha az étel a folyamat bármely pontján érintkezett gluténtartalmú anyaggal, utólag <strong>nem tehető biztonságossá</strong> annak eltávolításával.</div>
+
+    <div class="perm-card">
+      <div class="perm-title">A panír vagy a töltelék eltávolítása nem segít</div>
+      <div class="perm-desc">A hagyományos eljárással panírozott hús vagy zöldség nem lesz gluténmentes attól, ha leszedjük róla a panírt — és a töltött hús sem, ha kiszedjük belőle a tölteléket. Ezeket nem szabad lisztérzékenyeknek fogyasztani.</div>
+    </div>
+
+    <div class="perm-card">
+      <div class="perm-title">A használt sütőolaj szennyezett marad</div>
+      <div class="perm-desc">Tilos abban az olajban kisütni egy gluténmentes ételt, amiben előtte gluténtartalmút sütöttek. Az olaj a korábbi sütésből visszamaradt glutént továbbadja.</div>
+    </div>
+
+    <div class="perm-card">
+      <div class="perm-title">A leves leve sem biztonságos</div>
+      <div class="perm-desc">Ha hagyományos tésztát tettek egy levesbe, az már nem gluténmentes akkor sem, ha a tésztából nem szedünk, csak a léből. Ezért azt is tilos fogyasztani.</div>
+    </div>
+
+    <div class="perm-card">
+      <div class="perm-title">A kovászos uborka nem gluténmentes</div>
+      <div class="perm-desc">A hagyományos kovászos uborka sem gluténmentes, a kenyérrel történő érlelési technika miatt.</div>
+    </div>
+  </div>
+
+  <button class="print-btn" onclick="window.print()">Nyomtatás / Mentés PDF-ként</button>
+
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function tog(header) {
+  const body = header.nextElementSibling;
+  const chev = header.querySelector('.chev');
+  body.classList.toggle('open');
+  if (chev) chev.classList.toggle('open');
+}
+</script>
+</body>
+</html>
